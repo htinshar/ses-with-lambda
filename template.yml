@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: 'SAM template for Serverless framework service: '
+Resources:
+  SendEmail:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: api/handler/email.send
+      Runtime: nodejs6.10
+      CodeUri: >-
+        /private/var/www/html/myGit/serverless-with-sam/.serverless/your-service-name.zip
+      MemorySize: 128
+      Timeout: 30
+      Environment:
+        Variables:
+          region: your-region
+          sender: dkim-verified-email
+          recipient: Please add your recipient email here
+          access_key_id: your-aws-api-key
+          access_key_secret: your-aws-secrect-key
+      Events:
+        Event1:
+          Type: Api
+          Properties:
+            Path: /mail
+            Method: get
+            RestApiId:
+              Ref: YourServiceName
+  YourServiceName:
+    Type: 'AWS::Serverless::Api'
+    Properties:
+      StageName: dev
+      DefinitionBody:
+        swagger: '2.0'
+        info:
+          title:
+            Ref: 'AWS::StackName'
+        paths:
+          /mail:
+            options:
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{ "statusCode" : 200 }'
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key'''
+                      method.response.header.Access-Control-Allow-Methods: '''get'''
+                      method.response.header.Access-Control-Allow-Origin: '''*'''
+                    responseTemplates:
+                      application/json: '{}'
+              responses:
+                '200':
+                  headers:
+                    Access-Control-Allow-Headers:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Origin:
+                      type: string
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri:
+                  'Fn::Sub': >-
+                    arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SendEmail.Arn}/invocations
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key'''
+                      method.response.header.Access-Control-Allow-Methods: '''get'''
+                      method.response.header.Access-Control-Allow-Origin: '''*'''
+                    responseTemplates:
+                      application/json: '{}'
+              responses:
+                '200':
+                  headers:
+                    Access-Control-Allow-Headers:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Origin:
+                      type: string
+  SendEmailLambdaPermission:
+    Type: 'AWS::Lambda::Permission'
+    DependsOn:
+      - SendEmail
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName:
+        Ref: SendEmail
+      Principal: apigateway.amazonaws.com

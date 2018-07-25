@@ -1,0 +1,6 @@
+# This is config value for local developmment
+region: your-region
+sender: dkim-verified-email
+recipient: 'Please add your recipient email here'
+access_key_id: your-aws-api-key
+access_key_secret: your-aws-secrect-key

@@ -1,0 +1,21 @@
+{
+  "name": "sendingemail",
+  "version": "1.0.0",
+  "description": "This is sending email lambda function",
+  "main": "handler.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "keywords": [
+    "sending",
+    "email"
+  ],
+  "author": "htin shar",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless-sam": "0.0.5"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.224.1"
+  }
+}
