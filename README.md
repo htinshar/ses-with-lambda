@@ -22,7 +22,7 @@ This source code is to send transaction email with AWS lambda and set up `SAM` f
 
 You can test this lambda function locally. In order to do that, follow this step.
 
-- Type `sls sam export -o template.yml` in your source code folder, than all of you changes in `dev.yml` file will sync to `SAM` defination file.
+- Enter your source code folder and type `sls sam export -o template.yml` in console , than all of you changes in `dev.yml` file will sync to `SAM` defination file.
 - Type `sam local start-api` and then you can test your lambda function in your local with `http://localhost:3000/mail?username=TEST-INLOCAL&email=testinlocal0909@gmail.com`
 
 Then transaction email will send your email inbox.
